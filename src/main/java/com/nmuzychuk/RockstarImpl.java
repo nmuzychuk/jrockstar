@@ -1,41 +1,64 @@
 package com.nmuzychuk;
 
-import java.io.File;
-import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 public class RockstarImpl implements Rockstar {
+    private static Random rand = new Random();
 
-    public void make() {
+    public void make(File repo) {
         try {
-            Files.createDirectories(Paths.get("./test-repo"));
-            new ProcessBuilder()
-                    .directory(new File("./test-repo"))
-                    .command("sh", "-c", "pwd").inheritIO().start();
-            new ProcessBuilder()
-                    .directory(new File("./test-repo"))
-                    .command("sh", "-c", "git init").inheritIO().start();
-            Files.createFile(new File("./test-repo/test-file").toPath());
-            new ProcessBuilder()
-                    .directory(new File("./test-repo"))
-                    .command("sh", "-c", "git add test-file").inheritIO().start();
-            new ProcessBuilder()
-                    .directory(new File("./test-repo"))
-                    .command("sh", "-c", String.format("git commit -m fix --date=%s", LocalDateTime.now().minusDays(1).toString()))
-                    .inheritIO().start();
-//            new ProcessBuilder()
-//                    .command("sh", "-c", "rm -rf ./test-repo");
+            initRepo(repo);
 
-        } catch (IOException e) {
-            //
+            File file = repo.toPath().resolve("test-file").toFile();
+            Files.createFile(file.toPath());
+
+            for (int days = 5; days > 0; days--) {
+                makeChanges(file, LocalDateTime.now().minusDays(days));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
+    private static void initRepo(File repo) throws IOException, InterruptedException {
+        FileUtils.deleteDirectory(repo);
+        Files.createDirectories(repo.toPath());
+
+        new ProcessBuilder()
+                .directory(repo)
+                .command("sh", "-c", "git init").inheritIO().start().waitFor();
+    }
+
+    private static void makeChanges(File file, LocalDateTime dateTime) throws IOException, InterruptedException {
+        for (int i = rand.nextInt(42); i >= 0; i -= 7) {
+            changeFile(file);
+
+            new ProcessBuilder()
+                    .directory(file.toPath().getParent().toFile())
+                    .command("sh", "-c", String.format("git add %s; git commit -m fix --date=%s",
+                            file.getName(), dateTime.plusMinutes(i).toString()))
+                    .inheritIO().start().waitFor();
+        }
+    }
+
+    private static void changeFile(File file) throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            writer.write(rand.nextInt());
+        }
     }
 
     public static void main(String[] args) {
-        new RockstarImpl().make();
+//        if (args.length == 0) throw new IllegalArgumentException("Invalid repository name");
+
+        File repo = new File("test-repo");
+
+        new RockstarImpl().make(repo);
     }
 
 }
