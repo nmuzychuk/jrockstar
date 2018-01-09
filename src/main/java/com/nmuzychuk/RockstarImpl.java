@@ -5,10 +5,18 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class RockstarImpl implements Rockstar {
     private static Random rand = new Random();
+    private static List<String> COMMIT_MESSAGES = new ArrayList<>(
+            Arrays.asList("Update some files", "Fix a bug", "Bugfix", "Commit",
+                    "Update component", "Hotfix", "Fix the fix",
+                    "Add a feature")
+    );
 
     public void make(File repo) {
         try {
@@ -41,8 +49,10 @@ public class RockstarImpl implements Rockstar {
 
             new ProcessBuilder()
                     .directory(file.toPath().getParent().toFile())
-                    .command("sh", "-c", String.format("git add %s; git commit -m fix --date=%s",
-                            file.getName(), dateTime.plusMinutes(i).toString()))
+                    .command("sh", "-c", String.format("git add %s; git commit -m '%s' --date=%s",
+                            file.getName(),
+                            COMMIT_MESSAGES.get(rand.nextInt(COMMIT_MESSAGES.size())),
+                            dateTime.plusMinutes(i).toString()))
                     .inheritIO().start().waitFor();
         }
     }
