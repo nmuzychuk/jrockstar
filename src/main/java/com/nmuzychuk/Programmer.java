@@ -10,23 +10,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class RockstarImpl implements Rockstar {
+public class Programmer implements Rockstar {
+    private static final int level = 42;
     private static Random rand = new Random();
     private static List<String> COMMIT_MESSAGES = new ArrayList<>(
             Arrays.asList("Update some files", "Fix a bug", "Bugfix", "Commit",
                     "Update component", "Hotfix", "Fix the fix",
                     "Add a feature")
     );
+    private static File repo = new File("java-repo");
 
     public void make(File repo) {
         try {
-            initRepo(repo);
+            init(repo);
 
-            File file = repo.toPath().resolve("test-file").toFile();
+            File file = repo.toPath().resolve("Class.java").toFile();
             Files.createFile(file.toPath());
 
             for (int days = 5; days > 0; days--) {
-                makeChanges(file, LocalDateTime.now().minusDays(days));
+                work(file, LocalDateTime.now().minusDays(days));
             }
 
         } catch (Exception e) {
@@ -34,7 +36,7 @@ public class RockstarImpl implements Rockstar {
         }
     }
 
-    private static void initRepo(File repo) throws IOException, InterruptedException {
+    private static void init(File repo) throws IOException, InterruptedException {
         FileUtils.deleteDirectory(repo);
         Files.createDirectories(repo.toPath());
 
@@ -43,9 +45,11 @@ public class RockstarImpl implements Rockstar {
                 .command("sh", "-c", "git init").inheritIO().start().waitFor();
     }
 
-    private static void makeChanges(File file, LocalDateTime dateTime) throws IOException, InterruptedException {
-        for (int i = rand.nextInt(42); i >= 0; i -= 7) {
-            changeFile(file);
+    private static void work(File file, LocalDateTime dateTime) throws IOException, InterruptedException {
+        for (int i = rand.nextInt(level); i >= 0; i -= 7) {
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                writer.write(rand.nextInt());
+            }
 
             new ProcessBuilder()
                     .directory(file.toPath().getParent().toFile())
@@ -57,18 +61,11 @@ public class RockstarImpl implements Rockstar {
         }
     }
 
-    private static void changeFile(File file) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.write(rand.nextInt());
-        }
-    }
-
     public static void main(String[] args) {
-//        if (args.length == 0) throw new IllegalArgumentException("Invalid repository name");
+        if (args.length >= 2) throw new IllegalArgumentException();
+        if (args.length == 1) repo = new File(args[0]);
 
-        File repo = new File("test-repo");
-
-        new RockstarImpl().make(repo);
+        new Programmer().make(repo);
     }
 
 }

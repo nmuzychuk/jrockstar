@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class RockstarImplTest {
+public class ProgrammerTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     @Before
@@ -20,7 +20,7 @@ public class RockstarImplTest {
     @Test
     public void testApp() throws IOException {
         final File repo = new File("test-app");
-        new RockstarImpl().make(repo);
+        new Programmer().make(repo);
         FileUtils.deleteDirectory(repo);
     }
 
