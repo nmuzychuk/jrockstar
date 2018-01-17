@@ -19,9 +19,9 @@ public class ProgrammerTest {
 
     @Test
     public void testApp() throws IOException {
-        final File repo = new File("test-app");
-        new Programmer().make(repo);
-        FileUtils.deleteDirectory(repo);
+        final String repo = "test-app";
+        Programmer.main(new String[]{repo});
+        FileUtils.deleteDirectory(new File(repo));
     }
 
 }
