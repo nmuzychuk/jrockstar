@@ -1,9 +1,0 @@
-language: java
-jdk:
-- openjdk8
-after_success:
-- wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar
-- java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml
-env:
-  global:
-    secure: ppSlpBbZoYpUBS3XIGEoocLdoXUAG/BqFWpplDeEOCUE02idN2+tNo5rWwFqcje85C5h6BI91wUNUl0jAdsLSYKFZbJF/C5v0PV676cYleDwTs2Uug0afHA6cQ8QuZxpI89ubh9iGVGouQxMctBDCQOt84sXbgJmuBrEAgBxPY0eSQcaki/Ki37f+13pVRRGIHdtsij/v9XktNywuxvOR4mqpvmIu1rJR4PCu6dkZA5nhEbUN5DrIJpu+iuje/VGkILuHpNkziEmW39XbieGqzxY63Wg4kVm0wd5J6XVAPHkO3qQryhePtQHLHB5xSusz4CVKV1VYua4LxLgNrue9FHh29MRELXGDmsbXU2aVb78QHwzS8dmyy+2ubn4grEniKsEyQ9BIkfJtSpNDlHO8L9AThjEUO30oO1SqyFiDcQqB+UOliLq8pDpQ+UUB0c5VeCaY0iQcUEozbA1FzOfKNhe7HQpBwlSUtpkKYKARxrQZ3rWauwidW4xO2Un0CkWdcShE2QOf1i5Vo98fnz3cRpNYBzE5j/AFvb1Pw+iwFCTvrTNXpphTygpQXbXbvA7xAxoVxwUcyqGL4UoONXf/6PTI9RUGS9+fmAuPS1ekIujiSPwk1ylrI4SiRlyB4yR/ArjW6A5Nguj1AmqqCq/1AYrgw+kywodN0HXStlhkZs=
